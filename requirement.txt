@@ -1,0 +1,3 @@
+ollama
+whisper-cpp
+python-dotenv
