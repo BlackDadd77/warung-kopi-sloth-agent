@@ -1,3 +1,9 @@
+![PUSARAN EMAS 2.0](poster.jpg)
+
+# Warung Kopi Sloth Agent 🦥
+
+Biar AI jaga sembang, tuan jaga bendang.
+**DEV Hacktoberfest Week 3 - Slow and Steady**
 # warung-kopi-sloth-agent
 In my kampung Titi Gajah, the Warung Kopi WhatsApp group has 300+ messages daily. Pak Din shares tazkirah, Mat worries about his spinning coffee cup (a sign the Golden Vortex is coming), and Minah reminds everyone about two heirlooms: Quran and Sunnah
 Scrolling is tiring. So I built a *Slow and Steady Agent*.
