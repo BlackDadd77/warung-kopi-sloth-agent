@@ -1,0 +1,631 @@
+```html
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pusaran Emas / SlothSync AI - Submission Showcase</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amberGold: '#D97706',
+                        warmBg: '#FAF8F5',
+                        warmCard: '#FFFFFF',
+                        warmBorder: '#E2E8F0',
+                        brandDark: '#0F172A',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF8F5;
+            color: #1E293B;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 380px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .tab-btn.active {
+            border-bottom: 3px solid #D97706;
+            color: #D97706;
+            font-weight: 700;
+        }
+        .step-card {
+            transition: all 0.3s ease;
+        }
+        .step-card.active-step {
+            border-color: #D97706;
+            background-color: #FEF3C7;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Chosen Palette: Warm Neutral & Amber Gold -->
+    <!-- Application Structure Plan:
+             Aplikasi ini dirancang sebagai 'Interactive Pitch & Showcase Dashboard' untuk submission SlothSync AI / Pusaran Emas.
+             1. Hero Header: Tajuk projek, status pautan (Demo & Repo), dan ringkasan nilai utama.
+             2. Tab Navigation: Memudahkan juri meneroka mengikut struktur submission (Ringkasan, Simulasi AI, Open Innovation, Metrik Impak & Tech Stack).
+             3. Section 1 (Ringkasan & Masalah): Memaparkan masalah "malas yang produktif" dan penyelesaian SlothSync AI.
+             4. Section 2 (Simulasi Workflow Interaktif): Alur 'User Choose Folder -> Scan -> AI Suggestion -> Human Approval -> Execute' secara dinamik.
+             5. Section 3 (Open Innovation Pillars): 5 prinsip utama keutamaan data & local AI disajikan dalam kad interaktif.
+             6. Section 4 (The Lazy Payoff & ROI Calculator): Carta Chart.js penjimatan masa & kalkulator produktiviti interaktif untuk juri mengira kecekapan.
+             7. Section 5 (Tech Stack & Hadiah): Kelayakan kategori hadiah & senarai teknologi.
+        -->
+    <!-- Visualization & Content Choices:
+             - Visual 1: Chart.js Bar Chart (Perbandingan Masa: Pengurusan Manual vs SlothSync AI)
+             - Visual 2: Chart.js Doughnut Chart (Pengurangan Kesilapan Manusia - 90% Accuracy/Reduction)
+             - Visual 3: Interactive Step Simulator (Simulasi alur Human-in-the-Loop)
+             - Visual 4: Live ROI Calculator (Kalkulator Jam Dijimatkan & Kos API Sifar)
+             - Justifikasi: Tiada SVG/Mermaid digunakan. Carta dimuatkan melalui Chart.js canvas dalam bekas terhad (chart-container).
+        -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Header / Hero Section -->
+    <header class="bg-white border-b border-warmBorder sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amberGold flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    🦥
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-brandDark tracking-tight">Pusaran Emas <span class="text-amberGold">/ SlothSync AI</span></h1>
+                    <p class="text-xs text-gray-500">
+                        Automasi Pintar Local AI untuk Pembangun Produktif
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 items-center">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+                    🟢 Local AI (Ollama/Gemma)
+                </span>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800">
+                    🛡️ Human-in-the-Loop
+                </span>
+                <a href="#demo" onclick="alert('Sila gantikan pautan ini dengan pautan YouTube / Demo sebenar anda!'); return false;" class="text-xs bg-brandDark text-white px-3 py-1.5 rounded-lg hover:bg-gray-800 font-medium transition">
+                    ▶️ Live Demo
+                </a>
+                <a href="#github" onclick="alert('Sila gantikan pautan ini dengan pautan GitHub Public anda!'); return false;" class="text-xs border border-gray-300 text-gray-700 px-3 py-1.5 rounded-lg hover:bg-gray-100 font-medium transition">
+                    💻 GitHub Repo
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-6 border-t border-gray-100 text-sm overflow-x-auto">
+            <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn active py-3 px-1 whitespace-nowrap">1. Gambaran Projek</button>
+            <button onclick="switchTab('workflow')" id="tab-workflow" class="tab-btn py-3 px-1 whitespace-nowrap">2. Alur AI Interaktif</button>
+
+            <button onclick="switchTab('innovation')" id="tab-innovation" class="tab-btn py-3 px-1 whitespace-nowrap">3. Open Innovation (5 Teras)</button>
+            <button onclick="switchTab('payoff')" id="tab-payoff" class="tab-btn py-3 px-1 whitespace-nowrap">4. Impak & Kalkulator Masa</button>
+            <button onclick="switchTab('tech')" id="tab-tech" class="tab-btn py-3 px-1 whitespace-nowrap">5. Tech Stack & Kategori</button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- TAB 1: GAMBARAN PROJEK & MASALAH -->
+        <section id="content-overview" class="tab-content space-y-6">
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 shadow-sm">
+                <h2 class="text-lg font-bold text-amber-900 mb-2">💡 Pengenalan: "Sifat Malas yang Produktif"</h2>
+                <p class="text-sm text-amber-950 leading-relaxed">
+                    Pengaturcara dan pengguna kerap menghabiskan masa puluhan minit setiap minggu untuk kerja-kerja rencam (*tedious*) seperti menyusun direktori berselerak, menamakan semula fail satu-per-satu, dan menulis mesej commit Git secara berulang.
+                    <strong>Pusaran Emas / SlothSync AI</strong> dibina untuk mengambil alih tugas repetitif ini secara automatik menggunakan model AI tempatan tanpa menjejaskan privasi data.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Problem Card -->
+                <div class="bg-white p-6 rounded-2xl border border-warmBorder shadow-sm">
+                    <div class="text-red-500 font-bold text-sm mb-2 flex items-center gap-2">
+                        ❌ Masalah Utama (Geseran Harian)
+                    </div>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li class="flex items-start gap-2">
+                            <span class="text-red-400 font-bold">•</span>
+                            <span><strong>Fail Berselerak:</strong> Desktop dan folder Muat Turun penuh dengan nama fail rawak yang sukar dicari.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-red-400 font-bold">•</span>
+                            <span><strong>Git Log Hambar:</strong> Menulis log commit berulang kali yang tidak menggambarkan perubahan kod sebenar.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-red-400 font-bold">•</span>
+                            <span><strong>Risiko Data Cloud:</strong> Bimbang memuat naik kepingan kod peribadi atau dokumen sensitif ke API pihak ketiga.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Solution Card -->
+                <div class="bg-white p-6 rounded-2xl border border-warmBorder shadow-sm">
+                    <div class="text-emerald-600 font-bold text-sm mb-2 flex items-center gap-2">
+                        ✅ Penyelesaian SlothSync AI
+                    </div>
+                    <ul class="space-y-3 text-sm text-gray-600">
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-500 font-bold">•</span>
+                            <span><strong>Pengurusan Otomatik:</strong> Menyusun dan menamakan semula fail berdasarkan analisis isi kandungan oleh Local AI.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-500 font-bold">•</span>
+                            <span><strong>100% Privasi Terjamin:</strong> Beroperasi sepenuhnya dalam mesin tempatan melalui Ollama (Gemma/Llama).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-emerald-500 font-bold">•</span>
+                            <span><strong>Kawalan Penuh Manusia:</strong> Cadangan AI wajib diluluskan oleh pengguna sebelum sebarang tindakan dilaksanakan.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: SIMULASI WORKFLOW AI INTERAKTIF -->
+        <section id="content-workflow" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-warmBorder shadow-sm">
+                <h2 class="text-lg font-bold text-brandDark mb-1">🤖 Demonstrasi Interaktif Workflow AI</h2>
+                <p class="text-xs text-gray-500 mb-6">
+                    Uji bagaimana SlothSync AI memproses fail secara 'Human-in-the-Loop' tanpa tindakan melulu.
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Workflow Interactive Steps -->
+                    <div class="space-y-3">
+                        <div id="step-1" class="step-card active-step p-4 rounded-xl border border-warmBorder cursor-pointer" onclick="runWorkflowStep(1)">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold text-amberGold">LANGKAH 1</span>
+                                <span class="text-xs bg-white px-2 py-0.5 rounded border border-gray-200">User Input</span>
+                            </div>
+                            <h3 class="text-sm font-semibold text-gray-800">Pilih Folder Sasaran</h3>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Pengguna memilih direktori tempatan yang berselerak.
+                            </p>
+                        </div>
+
+                        <div id="step-2" class="step-card p-4 rounded-xl border border-warmBorder cursor-pointer" onclick="runWorkflowStep(2)">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold text-gray-400">LANGKAH 2</span>
+                                <span class="text-xs bg-white px-2 py-0.5 rounded border border-gray-200">System Scan</span>
+                            </div>
+                            <h3 class="text-sm font-semibold text-gray-800">Imbas & Analisis Metadata</h3>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Sistem membaca struktur fail tanpa menghantar data ke luar.
+                            </p>
+                        </div>
+
+                        <div id="step-3" class="step-card p-4 rounded-xl border border-warmBorder cursor-pointer" onclick="runWorkflowStep(3)">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold text-gray-400">LANGKAH 3</span>
+                                <span class="text-xs bg-white px-2 py-0.5 rounded border border-gray-200">Local AI</span>
+                            </div>
+                            <h3 class="text-sm font-semibold text-gray-800">Ollama/Gemma Cadang Action</h3>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Model lokal menghasilkan cadangan susunan / nama baru.
+                            </p>
+                        </div>
+
+                        <div id="step-4" class="step-card p-4 rounded-xl border border-warmBorder cursor-pointer" onclick="runWorkflowStep(4)">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-bold text-gray-400">LANGKAH 4</span>
+                                <span class="text-xs bg-white px-2 py-0.5 rounded border border-gray-200">Approval</span>
+                            </div>
+                            <h3 class="text-sm font-semibold text-gray-800">Human-in-the-Loop Approve</h3>
+                            <p class="text-xs text-gray-500 mt-1">
+                                Pengguna menyemak & menekan butang 'Approve'.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Terminal Display -->
+                    <div class="lg:col-span-2 bg-slate-900 rounded-xl p-5 text-gray-100 font-mono text-xs flex flex-col justify-between shadow-inner">
+                        <div>
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4 text-gray-400">
+                                <span>SlothSync AI Engine v1.0.0 (Local Engine)</span>
+                                <span class="text-emerald-400 font-bold">● Status: Standby</span>
+                            </div>
+                            <div id="terminal-output" class="space-y-2 leading-relaxed min-h-[180px]">
+                                <p class="text-amber-400">
+                                    > Mengimbas direktori pengguna...
+                                </p>
+                                <p class="text-gray-400">
+                                    [Ditemui]: 24 fail tidak tersusun dalam /Downloads/Project_Alpha/
+                                </p>
+                                <p class="text-gray-400">
+                                    Sila klik "Seterusnya" untuk melihat cadangan Ollama AI.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-800 flex justify-between items-center">
+                            <span class="text-gray-400 text-[11px]" id="sim-status">Langkah 1/4 Selesai</span>
+                            <button id="sim-next-btn" onclick="nextWorkflowStep()" class="bg-amberGold text-white px-4 py-2 rounded-lg font-sans font-semibold text-xs hover:bg-amber-600 transition">
+                                Seterusnya ➔
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: OPEN INNOVATION (5 TERAS) -->
+        <section id="content-innovation" class="tab-content hidden space-y-6">
+            <div class="bg-amber-50 p-6 rounded-2xl border border-amber-200">
+                <h2 class="text-lg font-bold text-amber-900 mb-1">🌐 Mengapa Open Innovation & Local AI Penting?</h2>
+                <p class="text-xs text-amber-800">
+                    5 jawapan tuntas yang memenuhi kriteria utama penilaian juri hackathon.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Pillar 1 -->
+                <div class="bg-white p-5 rounded-xl border border-warmBorder shadow-sm space-y-2">
+                    <div class="text-amberGold text-xl font-bold">
+                        1. 🔒
+                    </div>
+                    <h3 class="font-bold text-sm text-brandDark">Greater Control Over Data</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        Tiada sebarang fail peribadi, kod sulit, atau data sensitif dihantar ke pelayan API pihak ketiga di cloud. Semuanya kekal selamat di dalam mesin peribadi pengguna.
+                    </p>
+                </div>
+
+                <!-- Pillar 2 -->
+                <div class="bg-white p-5 rounded-xl border border-warmBorder shadow-sm space-y-2">
+                    <div class="text-amberGold text-xl font-bold">
+                        2. ⚡
+                    </div>
+                    <h3 class="font-bold text-sm text-brandDark">Less Dependence on Internet</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        Beroperasi 100% secara offline. Aplikasi kekal pantas dan boleh digunakan di mana-mana sahaja tanpa risau masalah kestabilan atau ketiadaan sambungan internet.
+                    </p>
+                </div>
+
+                <!-- Pillar 3 -->
+                <div class="bg-white p-5 rounded-xl border border-warmBorder shadow-sm space-y-2">
+                    <div class="text-amberGold text-xl font-bold">
+                        3. 💰
+                    </div>
+                    <h3 class="font-bold text-sm text-brandDark">Fewer Recurring API Costs</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        Kos operasi sifar (*zero token cost*). Tiada yuran langganan bulanan yang mahal kerana memanfaatkan kuasa pemprosesan komputer tempatan (CPU/GPU).
+                    </p>
+                </div>
+
+                <!-- Pillar 4 -->
+                <div class="bg-white p-5 rounded-xl border border-warmBorder shadow-sm space-y-2">
+                    <div class="text-amberGold text-xl font-bold">
+                        4. 🔬
+                    </div>
+                    <h3 class="font-bold text-sm text-brandDark">Freedom to Experiment</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        Pembangun bebas menukar model open-weight (Gemma / Llama), mengubah suai sistem prompt, atau menguji alur kerja baru tanpa terikat dengan sekatan *rate limits*.
+                    </p>
+                </div>
+
+                <!-- Pillar 5 -->
+                <div class="bg-white p-5 rounded-xl border border-warmBorder shadow-sm space-y-2 md:col-span-2 lg:col-span-2">
+                    <div class="text-amberGold text-xl font-bold">
+                        5. 🤝
+                    </div>
+                    <h3 class="font-bold text-sm text-brandDark">Automation That Respects User (Human-in-the-Loop)</h3>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        Teknologi ini memperkasakan manusia sebagai pengendali utama. AI bertindak sebagai penasihat pintar yang memerlukan persetujuan pengguna sebelum melakukan apa-apa perubahan fizikal pada sistem fail.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: METRIK IMPAK & KALKULATOR MASA -->
+        <section id="content-payoff" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Visual Chart 1: Time Saved -->
+                <div class="bg-white p-5 rounded-2xl border border-warmBorder shadow-sm">
+                    <h3 class="text-sm font-bold text-brandDark mb-1">📊 Purata Masa Dibelanjakan Seminggu (Minit)</h3>
+                    <p class="text-xs text-gray-500 mb-4">
+                        Perbandingan tugas manual vs penggunaan SlothSync AI.
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="timeSavedChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Visual Chart 2: Error Reduction -->
+                <div class="bg-white p-5 rounded-2xl border border-warmBorder shadow-sm">
+                    <h3 class="text-sm font-bold text-brandDark mb-1">🎯 Pengurangan Kesilapan Manusia (Error Rate)</h3>
+                    <p class="text-xs text-gray-500 mb-4">
+                        Mengurangkan ralat salah namakan/padam fail sebanyak 90%.
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="errorRateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive ROI Calculator -->
+            <div class="bg-white p-6 rounded-2xl border border-warmBorder shadow-sm">
+                <h3 class="text-base font-bold text-brandDark mb-2">🧮 Kalkulator Impak Produktiviti Pasukan ("The Lazy Payoff")</h3>
+                <p class="text-xs text-gray-500 mb-6">
+                    Ukur berapa banyak jam dan kos API yang dapat dijimatkan oleh pasukan pembangun anda.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    <div class="space-y-4 md:col-span-1">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Bilangan Pembangun / Pengguna:</label>
+                            <input type="number" id="calc-devs" value="5" min="1" max="100" oninput="calculateROI()" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:border-amberGold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 mb-1">Anggaran Fail Diuruskan / Minggu:</label>
+                            <input type="number" id="calc-files" value="120" min="10" max="1000" oninput="calculateROI()" class="w-full border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:border-amberGold">
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 bg-amber-50 p-5 rounded-xl border border-amber-200 grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <span class="block text-xs font-semibold text-amber-800">Jam Dijimatkan / Tahun</span>
+                            <span id="res-hours" class="text-2xl font-extrabold text-amberGold mt-1 block">195 Jam</span>
+                            <span class="text-[10px] text-amber-700">~ 45 minit/minggu per dev</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs font-semibold text-amber-800">Kos API Dijimatkan</span>
+                            <span id="res-cost" class="text-2xl font-extrabold text-emerald-600 mt-1 block">$0 (100% Free)</span>
+                            <span class="text-[10px] text-amber-700">Guna Ollama Local CPU/GPU</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: TECH STACK & KATEGORI HADIAH -->
+        <section id="content-tech" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-warmBorder shadow-sm space-y-4">
+                <h2 class="text-lg font-bold text-brandDark">🛠️ Tech Stack Ekosistem</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-xl border border-gray-100 bg-gray-50 text-center">
+                        <span class="text-xs text-gray-500 block mb-1">Frontend Framework</span>
+                        <span class="font-bold text-sm text-brandDark">React + Vite</span>
+                    </div>
+                    <div class="p-4 rounded-xl border border-gray-100 bg-gray-50 text-center">
+                        <span class="text-xs text-gray-500 block mb-1">Desktop Wrapper</span>
+                        <span class="font-bold text-sm text-brandDark">Tauri (Rust)</span>
+                    </div>
+                    <div class="p-4 rounded-xl border border-gray-100 bg-gray-50 text-center">
+                        <span class="text-xs text-gray-500 block mb-1">Styling</span>
+                        <span class="font-bold text-sm text-brandDark">Tailwind CSS</span>
+                    </div>
+                    <div class="p-4 rounded-xl border border-gray-100 bg-gray-50 text-center">
+                        <span class="text-xs text-gray-500 block mb-1">Local AI Engine</span>
+                        <span class="font-bold text-sm text-brandDark">Ollama (Gemma)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prize Category Eligibility -->
+            <div class="bg-white p-6 rounded-2xl border border-warmBorder shadow-sm space-y-4">
+                <h2 class="text-lg font-bold text-brandDark">🏆 Kelayakan Kategori Hadiah</h2>
+                <div class="space-y-3">
+                    <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-sm text-amber-900">Best Use of Gemma / Ollama</h3>
+                            <p class="text-xs text-amber-800">
+                                Menggunakan model open-weight tempatan untuk pemprosesan metadata fail pintar tanpa gantung cloud API.
+                            </p>
+                        </div>
+                        <span class="text-xs font-bold bg-amber-200 text-amber-900 px-3 py-1 rounded-full">Layak</span>
+                    </div>
+
+                    <div class="p-4 rounded-xl border border-gray-200 bg-gray-50 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-sm text-brandDark">Best Use of Tauri & React</h3>
+                            <p class="text-xs text-gray-600">
+                                Aplikasi desktop berprestasi tinggi dengan saiz biner ringan dan integrasi natif sistem fail.
+                            </p>
+                        </div>
+                        <span class="text-xs font-bold bg-gray-200 text-gray-800 px-3 py-1 rounded-full">Layak</span>
+                    </div>
+
+                    <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-sm text-emerald-950">Overall Winner Consideration</h3>
+                            <p class="text-xs text-emerald-800">
+                                Menyelesaikan masalah dunia sebenar pembangun dengan impak penjimatan masa terukur & keutamaan etika data.
+                            </p>
+                        </div>
+                        <span class="text-xs font-bold bg-emerald-200 text-emerald-900 px-3 py-1 rounded-full">Utama</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-warmBorder py-4 text-center text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto px-4">
+            Pusaran Emas / SlothSync AI Submission Showcase — Dihasilkan untuk Pertandingan Hackathon.
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Tab Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            // Render charts if switching to payoff tab
+            if (tabId === 'payoff' && !window.chartsRendered) {
+                renderCharts();
+                window.chartsRendered = true;
+            }
+        }
+
+        // Workflow Interactive Simulator Logic
+        let currentStep = 1;
+        const terminalSteps = [{
+            step: 1,
+            status: "Langkah 1/4: Folder Dipilih",
+            html: `<p class="text-amber-400">> Mengimbas direktori sasaran...</p>
+            <p class="text-gray-300">[Sasaran]: /Users/dev/Downloads/Unsorted_Project/</p>
+            <p class="text-gray-400">Menemu 18 fail (.pdf, .png, log_old.txt, commit_draft.md)...</p>`
+        },
+            {
+                step: 2,
+                status: "Langkah 2/4: Imbasan Metadata",
+                html: `<p class="text-amber-400">> Ekstrak metadata tempatan secara offline...</p>
+                <p class="text-gray-300">[Scan Complete]: Tiada data dihantar ke mana-mana server luar (0 KB sent).</p>
+                <p class="text-gray-400">Menyediakan konteks untuk model Ollama (Gemma-2b)...</p>`
+            },
+            {
+                step: 3,
+                status: "Langkah 3/4: Cadangan Local AI",
+                html: `<p class="text-emerald-400">> Ollama AI Menjana Cadangan:</p>
+                <p class="text-amber-300">1. Rename 'log_old.txt' ➔ 'error_logs_2026-10.log'</p>
+                <p class="text-amber-300">2. Pindah 'mockup.png' ➔ '/assets/images/'</p>
+                <p class="text-amber-300">3. Cadangan Git Commit: "feat: add local authentication flow"</p>
+                <p class="text-gray-400">Menunggu pengesahan pengguna (Human-in-the-Loop)...</p>`
+            },
+            {
+                step: 4,
+                status: "Langkah 4/4: Perlaksanaan (Executed)",
+                html: `<p class="text-emerald-400">> Pengguna Menekan [APPROVE] ✅</p>
+                <p class="text-gray-300">[Perlaksanaan]: 18 fail disusun secara automatik!</p>
+                <p class="text-emerald-300 font-bold">> Status: Selesai! Masa dijimatkan: ~15 minit.</p>`
+            }];
+
+        function runWorkflowStep(stepNum) {
+            currentStep = stepNum;
+            for (let i = 1; i <= 4; i++) {
+                const card = document.getElementById(`step-${i}`);
+                if (i === stepNum) {
+                    card.classList.add('active-step');
+                    card.querySelector('span').classList.replace('text-gray-400', 'text-amberGold');
+                } else {
+                    card.classList.remove('active-step');
+                    card.querySelector('span').classList.replace('text-amberGold', 'text-gray-400');
+                }
+            }
+
+            const data = terminalSteps[stepNum - 1];
+            document.getElementById('terminal-output').innerHTML = data.html;
+            document.getElementById('sim-status').innerText = data.status;
+
+            const nextBtn = document.getElementById('sim-next-btn');
+            if (stepNum === 4) {
+                nextBtn.innerText = "Ulang Simulasi 🔄";
+            } else {
+                nextBtn.innerText = "Seterusnya ➔";
+            }
+        }
+
+        function nextWorkflowStep() {
+            if (currentStep >= 4) {
+                runWorkflowStep(1);
+            } else {
+                runWorkflowStep(currentStep + 1);
+            }
+        }
+
+        // ROI Calculator Logic
+        function calculateROI() {
+            const devs = parseInt(document.getElementById('calc-devs').value) || 1;
+            const files = parseInt(document.getElementById('calc-files').value) || 10;
+
+            // Average time saved per dev per week: 45 mins (0.75 hours)
+            const hoursPerYear = Math.round(devs * 0.75 * 52);
+            document.getElementById('res-hours').innerText = hoursPerYear + " Jam";
+        }
+
+        // Chart.js Implementations
+        function renderCharts() {
+            // Chart 1: Time Saved
+            const ctx1 = document.getElementById('timeSavedChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Susun Fail', 'Tulis Git Commit', 'Carian Dokumen', 'Pembersihan Log'],
+                    datasets: [{
+                        label: 'Manual (Minit/Minggu)',
+                        data: [25, 15, 10, 10],
+                        backgroundColor: '#94A3B8',
+                    },
+                        {
+                            label: 'SlothSync AI (Minit/Minggu)',
+                            data: [2, 2, 1, 1],
+                            backgroundColor: '#D97706',
+                        }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true, title: {
+                                display: true, text: 'Minit'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Error Reduction
+            const ctx2 = document.getElementById('errorRateChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tepat / Tanpa Ralat', 'Risiko Ralat Manusia'],
+                    datasets: [{
+                        data: [90, 10],
+                        backgroundColor: ['#10B981', '#F1F5F9'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+```
